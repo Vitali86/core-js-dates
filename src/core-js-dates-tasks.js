@@ -275,8 +275,33 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  const startDateArr = period.start.split('-');
+  const endDateArr = period.end.split('-');
+  const startDate = new Date(startDateArr.reverse().join('-'));
+  const endDate = new Date(endDateArr.reverse().join('-'));
+  const schedule = [];
+
+  const currentDate = startDate;
+  let isWorkingDay = true;
+
+  while (currentDate <= endDate) {
+    if (isWorkingDay) {
+      for (let i = 0; i < countWorkDays; i += 1) {
+        if (currentDate <= endDate) {
+          const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${currentDate.getFullYear()}`;
+          schedule.push(formattedDate);
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      }
+    } else {
+      currentDate.setDate(currentDate.getDate() + countOffDays);
+    }
+
+    isWorkingDay = !isWorkingDay;
+  }
+
+  return schedule;
 }
 
 /**
@@ -291,8 +316,8 @@ function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
  * Date(2022, 2, 1) => false
  * Date(2020, 2, 1) => true
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  return date.getFullYear() % 4 === 0;
 }
 
 module.exports = {
